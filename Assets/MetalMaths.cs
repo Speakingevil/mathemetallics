@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -211,6 +211,7 @@ public class MetalMaths : MonoBehaviour {
             x[0] += r * frec[i - 1];
             x[1] += r * frec[i];
             eval += r.ToString();
+            Debug.Log(r + " * (" + frec[i] + "\u03c1 + " + frec[i - 1] + ")");
         }
         r = Random.Range(0, ratio + 1);
         x[0] += r;
@@ -220,9 +221,10 @@ public class MetalMaths : MonoBehaviour {
         {
             int s = (2 * (i % 2)) - 1;
             r = Random.Range(0, ratio + 1);
+            x[0] -= s * r * frec[i + 1];
             x[1] += s * r * frec[i];
-            x[0] += -s * r * frec[i + 1];
             eval += r.ToString();
+            Debug.Log(r + " * (" + s * frec[i] + "\u03c1 + " + -s * frec[i + 1] + ")");
         }
         StartCoroutine(Minimise(eval, false));
         return x;
@@ -356,7 +358,7 @@ public class MetalMaths : MonoBehaviour {
             {
                 if (i + j < 9)
                     continue;
-                else if (i + j >= 20)
+                else if (i + j >= 29)
                     break;
                 d3[i + j - 9] += d[i] * d2[j];
             }
@@ -503,6 +505,11 @@ public class MetalMaths : MonoBehaviour {
                 buttons[5].OnInteract();
                 yield break;
             case "enter":
+                if (commands.Count(x => x.Length > 0) < 2)
+                {
+                    yield return "sendtochaterror!f Append numeric digits to entry commands.";
+                    yield break;
+                }
                 if(disps[unit + 4].text.Length > 9)
                 {
                     yield return "sendtochaterror!f Screen must be cleared before further entry.";
